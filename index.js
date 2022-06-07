@@ -13,8 +13,11 @@ app.ws('/', (ws, req) => {
         msg = JSON.parse(msg);
         switch(msg.method) {
             case "connection":
-                connectionHandler(ws, msg);    
-            break
+                connectionHandler(ws, msg);
+                break;
+            case "draw":
+                broadcastConnection(ws, msg);
+                break;
         }
         console.log(msg);
     });
@@ -34,7 +37,7 @@ const broadcastConnection = (ws, msg) => {
     aWss.clients.forEach(client => {
         if(client.id === msg.id) {
             //отправка сообщение клиентам
-            client.send(`Пользователь ${msg.username} подключился`);
+            client.send(JSON.stringify(msg));
         }    
     });
 }
